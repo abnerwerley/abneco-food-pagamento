@@ -7,6 +7,7 @@ import br.com.abneco.food.pagamento.persistence.PagamentoRepository;
 import br.com.abneco.food.pagamento.services.PagamentoService;
 import br.com.abneco.food.pagamento.utils.PagamentoTestMass;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -79,7 +80,8 @@ class PagamentoControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value(Status.CRIADO.toString()));
 
-        Pagamento pagamento = repository.findByCodigo(PagamentoTestMass.buildPagamentoDto(Status.CRIADO).getCodigo());
+        Pagamento pagamento = repository.findByCodigo(PagamentoTestMass.buildPagamentoDto(Status.CRIADO).getCodigo())
+                .orElseThrow(EntityNotFoundException::new);
         repository.deleteById(pagamento.getId());
     }
 
